@@ -12,7 +12,8 @@ small {
 .rowClickable {
   display: flex;
   justify-content: space-between;
-  margin-top: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
   border-bottom: 1px solid rgb(220 220 220);
 
   h6 {
@@ -28,6 +29,13 @@ small {
     text-decoration: underline;
     cursor: pointer;
   }
+}
+
+.imgPlaceHolder {
+  background-color: #858d95;
+  width: 100px;
+  height: 100px;
+  border-radius: 5px;
 }
 
 @media only screen and (width <= 575px) {

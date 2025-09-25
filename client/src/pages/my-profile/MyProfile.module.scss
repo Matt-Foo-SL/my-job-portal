@@ -19,7 +19,12 @@
 small {
   color: grey;
 }
-
+.imgPlaceHolder {
+  background-color: #858d95;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
 @media only screen and (width <= 575px) {
   .card {
     padding: 1rem;

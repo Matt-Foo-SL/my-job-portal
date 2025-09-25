@@ -86,7 +86,7 @@ const AdminDashboard = () => {
     }
   };
   const {
-    isPending,
+    isFetching,
     isError,
     data: applications,
     error
@@ -102,15 +102,12 @@ const AdminDashboard = () => {
     }
   }, [applications]);
 
-  if (isPending) {
-    return <Spinner animation="border" className="mt-5" />;
-  }
-
   if (isError) {
     return <span>Error: {error?.message}</span>;
   }
   return (
     <Container>
+      {/* Summary */}
       <Row className="mt-4">
         <Col>
           <h3>Job Applications</h3>
@@ -127,20 +124,45 @@ const AdminDashboard = () => {
             <Row>
               <Col className="pe-0">
                 <p className={styles.status}>In Progress</p>
-                <div className={styles.statusCount}>{applications?.filter((ele: Application) => ele.status === "InProgress").length}</div>
+                <div className={styles.statusCount}>
+                  {isFetching ? (
+                    <p className="placeholder-glow">
+                      <span className="placeholder col-2"></span>
+                    </p>
+                  ) : (
+                    applications?.filter((ele: Application) => ele.status === "InProgress").length
+                  )}
+                </div>
               </Col>
               <Col className="pe-0">
                 <p className={styles.status}>Successful</p>
-                <div className={styles.statusCount}>{applications?.filter((ele: Application) => ele.status === "Successful").length}</div>
+                <div className={styles.statusCount}>
+                  {isFetching ? (
+                    <p className="placeholder-glow">
+                      <span className="placeholder col-2"></span>
+                    </p>
+                  ) : (
+                    applications?.filter((ele: Application) => ele.status === "Successful").length
+                  )}
+                </div>
               </Col>
               <Col className="pe-0">
                 <p className={styles.status}>Unsuccessful</p>
-                <div className={styles.statusCountFontSizeOnly}>{applications?.filter((ele: Application) => ele.status === "Unsuccessful").length}</div>
+                <div className={styles.statusCountFontSizeOnly}>
+                  {isFetching ? (
+                    <p className="placeholder-glow">
+                      <span className="placeholder col-2"></span>
+                    </p>
+                  ) : (
+                    applications?.filter((ele: Application) => ele.status === "Unsuccessful").length
+                  )}
+                </div>
               </Col>
             </Row>
           </div>
         </Col>
       </Row>
+      {/* Search */}
       <Row>
         <Col lg={6}>
           <Stack direction="horizontal" gap={3}>
@@ -200,31 +222,66 @@ const AdminDashboard = () => {
           </tr>
         </thead>
         <tbody>
-          {filteredData
-            ?.sort((a, b) => a.user_jobs_id - b.user_jobs_id)
-            .map((ele: Application, i) => {
-              return (
-                <tr key={i}>
-                  <td>{dayjs(ele?.user_jobs_created_at).format("DD/MM/YYYY")}</td>
-                  <td>{ele?.user_name}</td>
-                  <td>{ele?.company_name}</td>
-                  <td>{ele?.job_title}</td>
-                  <td>{updatingJob && ele.user_jobs_id === selectedId ? <Spinner animation="border" size="sm" /> : <StatusBadge status={ele.status} />}</td>
-                  <td>
-                    <Dropdown>
-                      <Dropdown.Toggle variant="success" id="dropdown-basic" size="sm">
-                        Select
-                      </Dropdown.Toggle>
-                      <Dropdown.Menu>
-                        <Dropdown.Item onClick={() => updateJobStatus(ele, "Successful", ele.user_jobs_id)}>Successful</Dropdown.Item>
-                        <Dropdown.Item onClick={() => updateJobStatus(ele, "Unsuccessful", ele.user_jobs_id)}>Unsuccessful</Dropdown.Item>
-                        <Dropdown.Item onClick={() => updateJobStatus(ele, "InProgress", ele.user_jobs_id)}>InProgress</Dropdown.Item>
-                      </Dropdown.Menu>
-                    </Dropdown>
-                  </td>
-                </tr>
-              );
-            })}
+          {filteredData.length === 0 && (
+            <tr>
+              <td>
+                <p className="placeholder-glow">
+                  <span className="placeholder col-4"></span>
+                </p>
+              </td>
+              <td>
+                <p className="placeholder-glow">
+                  <span className="placeholder col-4"></span>
+                </p>
+              </td>
+              <td>
+                <p className="placeholder-glow">
+                  <span className="placeholder col-4"></span>
+                </p>
+              </td>
+              <td>
+                <p className="placeholder-glow">
+                  <span className="placeholder col-4"></span>
+                </p>
+              </td>
+              <td>
+                <p className="placeholder-glow">
+                  <span className="placeholder col-4"></span>
+                </p>
+              </td>
+              <td>
+                <p className="placeholder-glow">
+                  <span className="placeholder col-4"></span>
+                </p>
+              </td>
+            </tr>
+          )}
+          {filteredData.length !== 0 &&
+            filteredData
+              .sort((a, b) => a.user_jobs_id - b.user_jobs_id)
+              .map((ele: Application, i) => {
+                return (
+                  <tr key={i}>
+                    <td>{dayjs(ele?.user_jobs_created_at).format("DD/MM/YYYY")}</td>
+                    <td>{ele?.user_name}</td>
+                    <td>{ele?.company_name}</td>
+                    <td>{ele?.job_title}</td>
+                    <td>{updatingJob && ele.user_jobs_id === selectedId ? <Spinner animation="border" size="sm" /> : <StatusBadge status={ele.status} />}</td>
+                    <td>
+                      <Dropdown>
+                        <Dropdown.Toggle variant="success" id="dropdown-basic" size="sm">
+                          Select
+                        </Dropdown.Toggle>
+                        <Dropdown.Menu>
+                          <Dropdown.Item onClick={() => updateJobStatus(ele, "Successful", ele.user_jobs_id)}>Successful</Dropdown.Item>
+                          <Dropdown.Item onClick={() => updateJobStatus(ele, "Unsuccessful", ele.user_jobs_id)}>Unsuccessful</Dropdown.Item>
+                          <Dropdown.Item onClick={() => updateJobStatus(ele, "InProgress", ele.user_jobs_id)}>InProgress</Dropdown.Item>
+                        </Dropdown.Menu>
+                      </Dropdown>
+                    </td>
+                  </tr>
+                );
+              })}
         </tbody>
       </Table>
     </Container>

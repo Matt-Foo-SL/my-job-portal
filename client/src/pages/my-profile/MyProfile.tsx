@@ -56,20 +56,15 @@ const PublicProfile = () => {
   };
   // onload + cache
   const {
-    isPending,
     isError,
+    isFetching,
     data: profileDataObj,
     error
   } = useQuery<ProfileDataType>({
     queryKey: ["getMyProfileData"],
     queryFn: getMyProfileData,
-    placeholderData: placeHolderData,
     staleTime: 3 * 24 * 60 * 60 //cacheTime 3 days
   });
-
-  if (isPending) {
-    return <Spinner animation="border" className="mt-5" />;
-  }
 
   if (isError) {
     return <span>Error: {error?.message}</span>;
@@ -85,7 +80,13 @@ const PublicProfile = () => {
             <Card.Body>
               <Row className="d-flex justify-content-between">
                 <Col style={{ paddingLeft: 0 }} xs={{ order: 2, span: 12 }} sm={{ order: 1, span: 6 }}>
-                  {profileDataObj?.signed_avatar_url ? <Image roundedCircle src={profileDataObj?.signed_avatar_url} width="107" height="107" alt="" style={{ objectFit: "cover" }} /> : <Image src="../images/profile-placeholder.png" alt="default-avatar" style={{ objectFit: "cover", width: "107px", height: "107px" }} />}
+                  {isFetching ? (
+                    <div className="placeholder-glow">
+                      <div className={`${styles.imgPlaceHolder} placeholder`}></div>
+                    </div>
+                  ) : (
+                    <Image roundedCircle src={profileDataObj?.signed_avatar_url} width="107" height="107" alt="" style={{ objectFit: "cover" }} />
+                  )}
                 </Col>
                 <Col xs={{ order: 1, span: 12 }} sm={{ order: 2, span: 6 }}>
                   <Link to="/profile-settings">
@@ -94,41 +95,80 @@ const PublicProfile = () => {
                 </Col>
               </Row>
             </Card.Body>
-            <div className="d-flex mb-0">
-              <h3>{profileDataObj?.name}</h3>
-              {profileDataObj?.age && <p className={styles.card__age}>{profileDataObj?.age} years old</p>}
-            </div>
+
+            {isFetching ? (
+              <p className="placeholder-glow">
+                <span className="placeholder col-1  me-1"></span>
+                <span className="placeholder col-1"></span>
+              </p>
+            ) : (
+              <div className="d-flex mb-0">
+                <h3>{profileDataObj?.name}</h3>
+                {profileDataObj?.age && <p className={styles.card__age}>{profileDataObj?.age} years old</p>}
+              </div>
+            )}
             <p className="mb-0">This is a profile summary - Hi I&apos;m a full stack developer and I have built dashboards with React, Typescript, Bootstrap on the frontend and Nodejs, SQL, Graphql for the backend</p>
             <small>Singapore</small>
 
             <p className="mb-0 mt-2">
               <FontAwesomeIcon icon={faEnvelope} size="xl" className="me-2" />
-              {profileDataObj?.email}
+              {isFetching ? (
+                <span className="placeholder-glow">
+                  <span className="placeholder col-1"></span>
+                </span>
+              ) : (
+                (profileDataObj?.email ?? "-")
+              )}
             </p>
             <p className="mb-0">
               <FontAwesomeIcon icon={faWhatsapp} size="xl" className="me-2" />
-              +65 {profileDataObj?.whatsapp}
+              +65
+              {isFetching ? (
+                <span className="placeholder-glow">
+                  <span className="placeholder col-1"></span>
+                </span>
+              ) : (
+                (profileDataObj?.whatsapp ?? "91234567")
+              )}
             </p>
             <a className="mb-3 text-black" href="https://www.linkedin.com/in/shilong-foo/">
               <FontAwesomeIcon icon={faLinkedin} size="xl" className="me-2" />
               https://www.linkedin.com/in/shilong-foo/
             </a>
             <h3>Career</h3>
-            {profileDataObj?.job_title && <h6 className="mb-0">Job Title: {profileDataObj?.job_title}</h6>}
-            {profileDataObj?.company_name && (
-              <p className="mb-0">
-                Company: {profileDataObj?.company_name}{" "}
-                {profileDataObj?.start_date && (
-                  <small className="mb-3 d-block">
-                    {formattedStartDate} - {formattedEndDate ? formattedEndDate : "Present"}
-                  </small>
-                )}
-              </p>
-            )}
-            {profileDataObj?.job_description && (
-              <div className="mb-3">
-                <h6 className="mb-0">Job Description:</h6>
-                <small>{profileDataObj?.job_description}</small>
+            {isFetching ? (
+              <div>
+                <div className="placeholder-glow">
+                  <span className="placeholder col-3"></span>
+                </div>
+                <div className="placeholder-glow">
+                  <span className="placeholder col-3"></span>
+                </div>
+                <div className="placeholder-glow mb-3">
+                  <span className="placeholder col-3"></span>
+                </div>
+                <div className="placeholder-glow">
+                  <span className="placeholder col-2"></span>
+                </div>
+                <div className="placeholder-glow">
+                  <span className="placeholder col-2"></span>
+                </div>
+              </div>
+            ) : (
+              <div>
+                <h6 className="mb-0">Job Title: {profileDataObj?.job_title}</h6>
+                <p className="mb-0">
+                  Company: {profileDataObj?.company_name}{" "}
+                  {profileDataObj?.start_date && (
+                    <small className="mb-3 d-block">
+                      {formattedStartDate} - {formattedEndDate ? formattedEndDate : "Present"}
+                    </small>
+                  )}
+                </p>
+                <div className="mb-3">
+                  <h6 className="mb-0">Job Description:</h6>
+                  <small>{profileDataObj?.job_description}</small>
+                </div>
               </div>
             )}
           </Card>
