@@ -60,49 +60,88 @@ const JobApplications = () => {
   });
 
   if (isFetching) {
-    return <Spinner animation="border" className="mt-5" />;
+    return <SkeletonLoader />;
   }
   if (isError) {
     return <span>Error: {error?.message}</span>;
   }
 
   return (
+    <>
+      <Container>
+        <Row className="justify-content-center">
+          <Col className="pe-sm-0" sm={10}>
+            <div className={styles.customCard}>
+              <Form.Select aria-label="select status" onChange={(e) => setStatus(e.target.value)} value={status}>
+                <option value="InProgress">In Progress</option>
+                <option value="Successful">Successful</option>
+                <option value="Unsuccessful">Unsuccessful</option>
+              </Form.Select>
+              {jobApplications?.length === 0 && (
+                <Row className="pt-1">
+                  <Col>
+                    <p className="text-center">No jobs here!</p>
+                  </Col>
+                </Row>
+              )}
+              {jobApplications?.map((ele: JobApplication, i) => {
+                return (
+                  <Row className={styles.rowClickable} key={i} onClick={() => navigate("/job/" + ele.id)} data-testid={`job-application-${i}`}>
+                    <Col xs={4} sm={2}>
+                      <Image src={`./images/company${ele.id}.jpg`} alt="company-logo" style={{ objectFit: "cover", width: "100px", height: "100px" }} />
+                    </Col>
+                    <Col>
+                      <h6>{ele.job_title}</h6>
+                      <p className="mb-0">{ele.company_name}</p>
+                      <small className="d-block">{ele.location}</small>
+                      <small className="d-block mb-2 mt-2">Applied 3 days ago</small>
+                    </Col>
+                  </Row>
+                );
+              })}
+            </div>
+          </Col>
+        </Row>
+      </Container>
+    </>
+  );
+};
+const SkeletonLoader = () => {
+  return (
     <Container>
       <Row className="justify-content-center">
         <Col className="pe-sm-0" sm={10}>
           <div className={styles.customCard}>
-            <Form.Select aria-label="select status" onChange={(e) => setStatus(e.target.value)} value={status}>
+            <Form.Select name="select status" aria-label="select status">
               <option value="InProgress">In Progress</option>
               <option value="Successful">Successful</option>
               <option value="Unsuccessful">Unsuccessful</option>
             </Form.Select>
-            {jobApplications?.length === 0 && (
-              <Row className="pt-1">
-                <Col>
-                  <p className="text-center">No jobs here!</p>
-                </Col>
-              </Row>
-            )}
-            {jobApplications?.map((ele: JobApplication, i) => {
-              return (
-                <Row className={styles.rowClickable} key={i} onClick={() => navigate("/job/" + ele.id)} data-testid={`job-application-${i}`}>
-                  <Col xs={4} sm={2}>
-                    <Image src={`./images/company${ele.id}.jpg`} alt="company-logo" style={{ objectFit: "cover", width: "70px", height: "70px" }} />
-                  </Col>
-                  <Col>
-                    <h6>{ele.job_title}</h6>
-                    <p className="mb-0">{ele.company_name}</p>
-                    <small className="d-block">{ele.location}</small>
-                    <small className="d-block mb-2 mt-2">Applied 3 days ago</small>
-                  </Col>
-                </Row>
-              );
-            })}
+            <Row className="mt-3">
+              <Col xs={4} sm={2}>
+                <p className="placeholder-glow">
+                  <div className={`${styles.imgPlaceHolder} placeholder`}></div>
+                </p>
+              </Col>
+              <Col>
+                <div className="placeholder-glow">
+                  <span className="placeholder col-3"></span>
+                </div>
+                <div className="placeholder-glow">
+                  <span className="placeholder col-1 placeholder-sm"></span>
+                </div>
+                <div className="placeholder-glow">
+                  <span className="placeholder col-2 placeholder-sm"></span>
+                </div>
+                <div className="placeholder-glow">
+                  <span className="placeholder col-2 placeholder-sm"></span>
+                </div>
+              </Col>
+            </Row>
           </div>
         </Col>
       </Row>
     </Container>
   );
 };
-
 export default JobApplications;
