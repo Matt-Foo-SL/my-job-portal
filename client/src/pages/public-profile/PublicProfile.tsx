@@ -113,7 +113,7 @@ const PublicProfile = () => {
   };
   //on load + cache
   const {
-    isPending,
+    isFetching,
     isError,
     data: profileDataObj
   } = useQuery<ProfileDataType>({
@@ -149,7 +149,7 @@ const PublicProfile = () => {
   const formattedStartDate = dayjs(profileDataObj?.start_date).format("DD-MM-YYYY");
   const formattedEndDate = dayjs(profileDataObj?.end_date).format("DD-MM-YYYY");
 
-  if (publicProfilePrefIsPending || isPending) {
+  if (publicProfilePrefIsPending) {
     return <Spinner animation="border" className="mt-5" />;
   }
 
@@ -222,23 +222,59 @@ const PublicProfile = () => {
 
           <Col>
             <Card className={styles.card__col}>
-              <Card.Body style={{ paddingLeft: 0 }}>{profileDataObj?.signed_avatar_url ? <Image roundedCircle src={profileDataObj?.signed_avatar_url} width="107" height="107" alt="" style={{ objectFit: "cover" }} /> : <Image src="../images/profile-placeholder.png" alt="default-avatar" style={{ objectFit: "cover", width: "107px", height: "107px" }} />}</Card.Body>
-              <div className="d-flex">
-                <h3>{profileDataObj?.name}</h3>
-                {switches?.age && profileDataObj?.age && <p className={styles.card__age}>{profileDataObj?.age} years old</p>}
-              </div>
-              <h3>Career</h3>
-              {switches?.job_title && profileDataObj?.job_title && <h6 className="mb-0">{profileDataObj?.job_title}</h6>}
-              {switches?.company_logo_pref && profileDataObj?.company_logo_path && <Image roundedCircle src={profileDataObj?.company_logo_path || ""} width="100" height="100" alt="" style={{ objectFit: "cover" }} />}
-              {switches?.company_name && profileDataObj?.company_name && <p className="text-muted">{profileDataObj?.company_name}</p>}
-              {switches?.job_description && profileDataObj?.job_description && (
-                <div className="mb-3">
-                  <h6 className="mb-0">Job Description:</h6>
-                  <small>{profileDataObj?.job_description}</small>
+              <Card.Body style={{ paddingLeft: 0 }}>
+                {isFetching ? (
+                  <div className="placeholder-glow">
+                    <div className={`${styles.imgPlaceHolder} placeholder`}></div>
+                  </div>
+                ) : (
+                  <Image roundedCircle src={profileDataObj?.signed_avatar_url} width="107" height="107" alt="" style={{ objectFit: "cover" }} />
+                )}
+              </Card.Body>
+              {isFetching ? (
+                <p className="placeholder-glow">
+                  <span className="placeholder col-3"></span>
+                </p>
+              ) : (
+                <div className="d-flex">
+                  <h3>{profileDataObj?.name}</h3>
+                  {switches?.age && profileDataObj?.age && <p className={styles.card__age}>{profileDataObj?.age} years old</p>}
                 </div>
               )}
-              {switches?.start_date && formattedStartDate && <p className="text-muted mb-0">From: {formattedStartDate} </p>}
-              {switches?.end_date && formattedEndDate && <p className="text-muted">To: {formattedEndDate}</p>}
+              <h3>Career</h3>
+              {isFetching ? (
+                <div>
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-3"></span>
+                  </div>
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-3"></span>
+                  </div>
+                  <div className="placeholder-glow mb-3">
+                    <span className="placeholder col-3"></span>
+                  </div>
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-2"></span>
+                  </div>
+                  <div className="placeholder-glow">
+                    <span className="placeholder col-2"></span>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  {switches?.job_title && profileDataObj?.job_title && <h6 className="mb-0">{profileDataObj?.job_title}</h6>}
+                  {switches?.company_logo_pref && profileDataObj?.company_logo_path && <Image roundedCircle src={profileDataObj?.company_logo_path || ""} width="100" height="100" alt="" style={{ objectFit: "cover" }} />}
+                  {switches?.company_name && profileDataObj?.company_name && <p className="text-muted">{profileDataObj?.company_name}</p>}
+                  {switches?.job_description && profileDataObj?.job_description && (
+                    <div className="mb-3">
+                      <h6 className="mb-0">Job Description:</h6>
+                      <small>{profileDataObj?.job_description}</small>
+                    </div>
+                  )}
+                  {switches?.start_date && formattedStartDate && <p className="text-muted mb-0">From: {formattedStartDate} </p>}
+                  {switches?.end_date && formattedEndDate && <p className="text-muted">To: {formattedEndDate}</p>}
+                </div>
+              )}
             </Card>
           </Col>
         </Row>

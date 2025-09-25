@@ -13,7 +13,7 @@ const LazyLoad = ({ element, children }: LazyLoadProps) => {
   const content = element ?? children;
   return (
     <ErrorBoundary fallback={<h2>Could not fetch. Please refresh</h2>} onReset={() => navigate("/")}>
-      <Suspense fallback={<Spinner animation="border" className="mt-5" />}>{content}</Suspense>
+      <Suspense fallback={<Spinner animation="border" className="mt-5 ms-5" />}>{content}</Suspense>
     </ErrorBoundary>
   );
 };
