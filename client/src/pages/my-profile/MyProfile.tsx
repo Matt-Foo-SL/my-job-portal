@@ -56,7 +56,6 @@ const PublicProfile = () => {
   };
   // onload + cache
   const {
-    isPending,
     isError,
     isFetching,
     data: profileDataObj,
@@ -64,13 +63,8 @@ const PublicProfile = () => {
   } = useQuery<ProfileDataType>({
     queryKey: ["getMyProfileData"],
     queryFn: getMyProfileData,
-    //placeholderData: placeHolderData,
     staleTime: 3 * 24 * 60 * 60 //cacheTime 3 days
   });
-
-  //  if (isPending) {
-  //    return <Spinner animation="border" className="mt-5" />;
-  //  }
 
   if (isError) {
     return <span>Error: {error?.message}</span>;
